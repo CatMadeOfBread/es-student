@@ -18,4 +18,6 @@ target_link_libraries(blink
     hardware_gpio
 )
 
+pico_set_linker_script(blink ${CMAKE_CURRENT_LIST_DIR}/memmap_rp2040.ld)
+
 pico_add_extra_outputs(blink)
