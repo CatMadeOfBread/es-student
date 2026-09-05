@@ -1,0 +1,16 @@
+=== Git ===
+git version 2.53.0
+=== Python ===
+Python 3.14.4
+=== CMake ===
+cmake version 4.2.3
+=== Make ===
+GNU Make 4.4.1
+=== ARM GCC ===
+arm-none-eabi-gcc (15:14.2.rel1-1) 14.2.1 20241119
+=== VS Code ===
+1.136.0
+=== Picotool ===
+picotool v2.3.0 (Linux, GNU-15.2.0, Release)
+=== PICO_SDK_PATH ===
+/home/bacs/Repositories/pico/pico-sdk
