@@ -4,3 +4,5 @@ build/
 *.bin
 *.hex
 *.map
+.vscode/
+.DS_Store
