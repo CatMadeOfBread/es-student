@@ -1,0 +1,28 @@
+задание: 2.1.1
+проект: 211-command-usb
+устройство: 2e8a:000a
+серийный номер: 5054316540A3259C
+порт: /dev/ttyACM0
+начало: 2026-10-01T14:11:05
+   0.000 --> enable
+   0.129 <-- enable
+   0.129 <-- dbg read_line:67 got enable
+   0.130 <-- inf handle_command:30 led on
+   2.134 --> disable
+   2.291 <-- disable
+   2.291 <-- dbg read_line:67 got disable
+   2.291 <-- inf handle_command:35 led off
+   4.294 --> info
+   4.392 <-- info
+   4.392 <-- dbg read_line:67 got info
+   4.392 <-- project: 211-command-usb
+   4.392 <-- repo: https://github.com/CatMadeOfBread/es-student
+   4.392 <-- board: pico
+   4.392 <-- serial: 5054316540A3259C
+   4.392 <-- chip: manufacturer 0x927, part 0x0002, revision 2
+   4.392 <-- pico-sdk: 2.3.0
+   6.395 --> nosuchcommand
+   6.673 <-- nosuchcommand
+   6.673 <-- dbg read_line:67 got nosuchcommand
+   6.673 <-- err handle_command:47 unknown command: nosuchcommand
+итог: отправлено команд 4, принято строк 17
