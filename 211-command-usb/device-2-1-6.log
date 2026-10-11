@@ -1,0 +1,38 @@
+задание: 2.1.6
+проект: 211-command-usb
+устройство: 2e8a:000a
+серийный номер: 5054316540A3259C
+порт: /dev/ttyACM0
+начало: 2026-10-11T18:35:48
+   0.000 --> boot_info
+   0.200 <-- dbg read_line:122 got echo '========== STATUS =======
+   0.200 <-- err handle_command:103 unknown command: echo '========== STATUS =======
+   2.202 --> enable
+   2.339 <-- enable
+   2.340 <-- dbg read_line:122 got enable
+   2.340 <-- inf cmd_enable:30 led on
+   4.342 --> boot_info
+   4.541 <-- boot_info
+   4.541 <-- dbg read_line:122 got boot_info
+   4.541 <-- vector table   0x10000100
+   4.541 <-- stack top    0x20042000
+   4.541 <-- reset        0x100001f7
+   4.541 <-- reset (even) 0x100001f6
+   4.541 <-- gpio in        0xd0000004
+   4.541 <-- led bit      1
+   4.541 <-- gpio_get     1
+   6.544 --> disable
+   6.702 <-- disable
+   6.702 <-- dbg read_line:122 got disable
+   6.702 <-- inf cmd_disable:36 led off
+   8.704 --> boot_info
+   8.903 <-- boot_info
+   8.903 <-- dbg read_line:122 got boot_info
+   8.903 <-- vector table   0x10000100
+   8.903 <-- stack top    0x20042000
+   8.903 <-- reset        0x100001f7
+   8.903 <-- reset (even) 0x100001f6
+   8.903 <-- gpio in        0xd0000004
+   8.903 <-- led bit      0
+   8.903 <-- gpio_get     0
+итог: отправлено команд 5, принято строк 26
