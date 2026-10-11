@@ -6,3 +6,5 @@
 [![2.2.2 Неблокирующее мигание](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-2-2-2.yml/badge.svg)](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-2-2-2.yml)
 
 [![2.2.3 Цена вычислений](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-2-2-3.yml/badge.svg)](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-2-2-3.yml)
+
+[![2.2.4 Профилирование](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-2-2-4.yml/badge.svg)](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-2-2-4.yml)

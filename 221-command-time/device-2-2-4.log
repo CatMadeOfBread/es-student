@@ -1,0 +1,36 @@
+задание: 2.2.4
+проект: 221-command-time
+устройство: 2e8a:000a
+серийный номер: 5054316540A3259C
+порт: /dev/ttyACM0
+начало: 2026-10-11T19:57:03
+   0.000 --> main_time_reset
+   0.001 <-- main_time_reset
+   0.001 <-- dbg read_line:157 got main_time_reset
+   0.001 <-- max reset
+   2.004 --> main_time_exec
+   2.005 <-- main_time_exec
+   2.005 <-- dbg read_line:157 got main_time_exec
+   2.005 <-- iteration avg 2.55 us, max 238 us
+   3.007 --> calc_pi
+   3.007 <-- calc_pi
+   3.008 <-- dbg read_line:157 got calc_pi
+   7.730 <-- pi: 3.14159165
+   7.730 <-- time: 4722 ms
+   9.132 --> main_time_exec
+   9.132 <-- main_time_exec
+   9.133 <-- dbg read_line:157 got main_time_exec
+   9.133 <-- iteration avg 5.82 us, max 4723151 us
+  14.140 --> main_time_exec
+  14.140 <-- main_time_exec
+  14.141 <-- dbg read_line:157 got main_time_exec
+  14.141 <-- iteration avg 2.68 us, max 4723151 us
+  15.143 --> main_time_reset
+  15.143 <-- main_time_reset
+  15.143 <-- dbg read_line:157 got main_time_reset
+  15.143 <-- max reset
+  16.145 --> main_time_exec
+  16.145 <-- main_time_exec
+  16.146 <-- dbg read_line:157 got main_time_exec
+  16.146 <-- iteration avg 2.62 us, max 277 us
+итог: отправлено команд 7, принято строк 22
