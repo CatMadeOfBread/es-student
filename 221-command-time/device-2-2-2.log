@@ -1,0 +1,63 @@
+задание: 2.2.2
+проект: 221-command-time
+устройство: 2e8a:000a
+серийный номер: 5054316540A3259C
+порт: /dev/ttyACM0
+начало: 2026-10-11T19:14:05
+   0.000 --> uptime
+   0.000 <-- uptime
+   0.001 <-- dbg read_line:110 got uptime
+   0.001 <-- uptime: 1690067 ms
+   0.401 --> boot_info
+   0.402 <-- boot_info
+   0.402 <-- dbg read_line:110 got boot_info
+   0.402 <-- vector table   0x10000100
+   0.402 <-- stack top    0x20042000
+   0.402 <-- reset        0x100001f7
+   0.402 <-- reset (even) 0x100001f6
+   0.403 <-- gpio in        0xd0000004
+   0.403 <-- led bit      0
+   0.403 <-- gpio_get     0
+   0.803 --> uptime
+   0.804 <-- uptime
+   0.804 <-- dbg read_line:110 got uptime
+   0.804 <-- uptime: 1690870 ms
+   1.205 --> boot_info
+   1.205 <-- boot_info
+   1.205 <-- dbg read_line:110 got boot_info
+   1.205 <-- vector table   0x10000100
+   1.206 <-- stack top    0x20042000
+   1.206 <-- reset        0x100001f7
+   1.206 <-- reset (even) 0x100001f6
+   1.206 <-- gpio in        0xd0000004
+   1.206 <-- led bit      0
+   1.206 <-- gpio_get     0
+   1.607 --> uptime
+   1.607 <-- uptime
+   1.607 <-- dbg read_line:110 got uptime
+   1.607 <-- uptime: 1691674 ms
+   2.008 --> boot_info
+   2.009 <-- boot_info
+   2.009 <-- dbg read_line:110 got boot_info
+   2.009 <-- vector table   0x10000100
+   2.009 <-- stack top    0x20042000
+   2.009 <-- reset        0x100001f7
+   2.009 <-- reset (even) 0x100001f6
+   2.009 <-- gpio in        0xd0000004
+   2.009 <-- led bit      0
+   2.009 <-- gpio_get     0
+   2.410 --> uptime
+   2.411 <-- uptime
+   2.411 <-- dbg read_line:110 got uptime
+   2.411 <-- uptime: 1692477 ms
+   2.811 --> boot_info
+   2.812 <-- boot_info
+   2.812 <-- dbg read_line:110 got boot_info
+   2.812 <-- vector table   0x10000100
+   2.812 <-- stack top    0x20042000
+   2.812 <-- reset        0x100001f7
+   2.812 <-- reset (even) 0x100001f6
+   2.812 <-- gpio in        0xd0000004
+   2.813 <-- led bit      1
+   2.813 <-- gpio_get     1
+итог: отправлено команд 8, принято строк 48
