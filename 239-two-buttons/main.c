@@ -29,15 +29,19 @@ int main(void)
 
     led_task_init();
 
-    // Первая кнопка меняет состояние светодиода.
+    // Первая кнопка:
+    // короткое нажатие — следующее состояние,
+    // долгое нажатие — мигание.
     button_task_init(
         PLATFORM_BUTTON_LED,
-        led_task_next_state);
+        led_task_next_state,
+        led_task_blink);
 
-    // Вторая кнопка меняет период мигания.
+    // У второй кнопки долгого действия нет.
     button_task_init(
         PLATFORM_BUTTON_PERIOD,
-        led_task_next_period);
+        led_task_next_period,
+        NULL);
 
     pi_task_init();
     stdio_text_protocol_init();

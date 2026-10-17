@@ -5,12 +5,12 @@
 
 #include "platform/platform.h"
 
-// Функция, которую задача вызывает на подтверждённое нажатие.
 typedef void (*button_task_callback_t)(void);
 
 void button_task_init(
     platform_button_t button,
-    button_task_callback_t on_press);
+    button_task_callback_t on_press,
+    button_task_callback_t on_long_press);
 
 void button_task_handle(void);
 

@@ -8,6 +8,7 @@
 #include "systime/systime.h"
 
 #define BUTTON_DEBOUNCE_US (20 * 1000)
+#define BUTTON_LONG_PRESS_US 1000000
 
 typedef enum
 {
@@ -20,9 +21,16 @@ typedef enum
 typedef struct
 {
     button_state_t state;
+
     uint64_t transition_us;
+    uint64_t pressed_us;
+
     uint32_t press_count;
+
+    bool long_press_reported;
+
     button_task_callback_t on_press;
+    button_task_callback_t on_long_press;
 } button_task_data_t;
 
 static button_task_data_t buttons[PLATFORM_BUTTON_COUNT];
@@ -59,9 +67,16 @@ static void button_handle_one(
                      BUTTON_DEBOUNCE_US)
             {
                 data->state = BUTTON_STATE_PRESSED;
+                data->pressed_us = now_us;
+                data->long_press_reported = false;
                 data->press_count++;
 
-                if (data->on_press != NULL)
+                /*
+                 * Если долгого действия у кнопки нет,
+                 * короткое нажатие можно сообщить сразу.
+                 */
+                if (data->on_long_press == NULL &&
+                    data->on_press != NULL)
                 {
                     data->on_press();
                 }
@@ -74,6 +89,18 @@ static void button_handle_one(
                 data->transition_us = now_us;
                 data->state = BUTTON_STATE_RELEASING;
             }
+            else if (data->on_long_press != NULL &&
+                     !data->long_press_reported &&
+                     now_us - data->pressed_us >=
+                         BUTTON_LONG_PRESS_US)
+            {
+                /*
+                 * Долгое нажатие сообщаем ровно один раз,
+                 * даже если при отпускании будет дребезг.
+                 */
+                data->long_press_reported = true;
+                data->on_long_press();
+            }
             break;
 
         case BUTTON_STATE_RELEASING:
@@ -85,6 +112,18 @@ static void button_handle_one(
                      BUTTON_DEBOUNCE_US)
             {
                 data->state = BUTTON_STATE_RELEASED;
+
+                /*
+                 * Для кнопки с долгим действием короткое
+                 * нажатие становится известно только
+                 * после подтверждённого отпускания.
+                 */
+                if (data->on_long_press != NULL &&
+                    !data->long_press_reported &&
+                    data->on_press != NULL)
+                {
+                    data->on_press();
+                }
             }
             break;
     }
@@ -92,7 +131,8 @@ static void button_handle_one(
 
 void button_task_init(
     platform_button_t button,
-    button_task_callback_t on_press)
+    button_task_callback_t on_press,
+    button_task_callback_t on_long_press)
 {
     if (!button_valid(button))
     {
@@ -101,8 +141,11 @@ void button_task_init(
 
     buttons[button].state = BUTTON_STATE_RELEASED;
     buttons[button].transition_us = systime_us();
+    buttons[button].pressed_us = 0;
     buttons[button].press_count = 0;
+    buttons[button].long_press_reported = false;
     buttons[button].on_press = on_press;
+    buttons[button].on_long_press = on_long_press;
 }
 
 void button_task_handle(void)
