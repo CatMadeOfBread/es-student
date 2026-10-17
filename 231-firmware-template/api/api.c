@@ -11,10 +11,12 @@
 #include "pico/stdlib.h"
 
 #include "button-task.h"
-#include "device.h"
+#include "firmware.h"
+#include "device/device.h"
 #include "led-task.h"
 #include "pi-task.h"
-#include "profiling.h"
+#include "profiling/profiling.h"
+#include "systime/systime.h"
 
 // обработчик команды: получает имя и аргументы
 typedef void (*api_callback_t)(const command_t *command);
@@ -79,10 +81,10 @@ static void cmd_info(const command_t *command)
     device_info_t info;
     device_get_info(&info);
 
-    printf("name: %s\r\n", DEVICE_NAME);
+    printf("name: %s\r\n", FIRMWARE_NAME);
     printf("version: %s\r\n", FIRMWARE_VERSION);
-    printf("project: %s\r\n", DEVICE_PROJECT);
-    printf("repo: %s\r\n", DEVICE_REPO);
+    printf("project: %s\r\n", FIRMWARE_PROJECT);
+    printf("repo: %s\r\n", FIRMWARE_REPO);
     printf("board: %s\r\n", info.board);
     printf("serial: %s\r\n", info.serial);
     printf("chip: manufacturer 0x%03x, part 0x%04x, revision %u\r\n",
@@ -97,7 +99,7 @@ static void cmd_uptime(const command_t *command)
     (void)command;
 
     printf("uptime: %llu ms\r\n",
-           (unsigned long long)(time_us_64() / 1000));
+           (unsigned long long)systime_ms());
 }
 
 static void cmd_led_enable(const command_t *command)
@@ -222,6 +224,8 @@ static void cmd_profiling(const command_t *command)
 {
     (void)command;
 
+#if PROFILING_ENABLED
+
     for (uint32_t id = 0;
          id < PROFILING_STOPWATCH_COUNT;
          id++)
@@ -239,6 +243,12 @@ static void cmd_profiling(const command_t *command)
                result.mean_us,
                (unsigned)result.max_us);
     }
+
+#else
+
+    printf("profiling is disabled in this build\r\n");
+
+#endif
 }
 
 static void cmd_profiling_reset(const command_t *command)

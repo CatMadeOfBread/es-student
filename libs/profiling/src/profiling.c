@@ -1,9 +1,10 @@
-#include "profiling.h"
+#include "profiling/profiling.h"
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
 
-#include "pico/stdlib.h"
+#include "systime/systime.h"
 
 typedef struct
 {
@@ -34,6 +35,8 @@ void profiling_stopwatch_init(uint32_t id, const char *name)
     stopwatches[id].max_us = 0;
 }
 
+#if PROFILING_ENABLED
+
 void profiling_start(uint32_t id)
 {
     if (id >= PROFILING_STOPWATCH_COUNT ||
@@ -42,7 +45,8 @@ void profiling_start(uint32_t id)
         return;
     }
 
-    stopwatches[id].start_us = time_us_32();
+    stopwatches[id].start_us =
+        (uint32_t)systime_us();
 }
 
 void profiling_stop(uint32_t id)
@@ -54,7 +58,8 @@ void profiling_stop(uint32_t id)
     }
 
     uint32_t elapsed_us =
-        time_us_32() - stopwatches[id].start_us;
+        (uint32_t)systime_us() -
+        stopwatches[id].start_us;
 
     stopwatches[id].count++;
     stopwatches[id].sum_us += elapsed_us;
@@ -65,7 +70,11 @@ void profiling_stop(uint32_t id)
     }
 }
 
-bool profiling_get(uint32_t id, profiling_result_t *result)
+#endif
+
+bool profiling_get(
+    uint32_t id,
+    profiling_result_t *result)
 {
     if (id >= PROFILING_STOPWATCH_COUNT ||
         !stopwatches[id].initialized ||
@@ -103,10 +112,15 @@ void profiling_reset(void)
             continue;
         }
 
-        // profiling_reset() может быть вызван прямо внутри
-        // измеряемой команды. Поэтому начало текущего измерения
-        // переносим на момент сброса, а не обнуляем.
-        stopwatches[i].start_us = time_us_32();
+#if PROFILING_ENABLED
+        // reset может выполняться внутри замеряемой команды,
+        // поэтому начало текущего замера переносим на момент сброса.
+        stopwatches[i].start_us =
+            (uint32_t)systime_us();
+#else
+        stopwatches[i].start_us = 0;
+#endif
+
         stopwatches[i].count = 0;
         stopwatches[i].sum_us = 0;
         stopwatches[i].max_us = 0;

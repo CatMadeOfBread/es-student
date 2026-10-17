@@ -1,4 +1,4 @@
-#include "device.h"
+#include "device/device.h"
 
 #include <stdint.h>
 
@@ -6,6 +6,10 @@
 #include "hardware/regs/sysinfo.h"
 #include "pico/unique_id.h"
 #include "pico/version.h"
+
+#ifndef DEVICE_BOARD
+#define DEVICE_BOARD "unknown"
+#endif
 
 void device_get_info(device_info_t *info)
 {

@@ -7,6 +7,7 @@
 #include "hardware/gpio.h"
 
 #include "led-task.h"
+#include "systime/systime.h"
 
 #define BUTTON_PIN 15
 #define BUTTON_DEBOUNCE_MS 20
@@ -38,14 +39,14 @@ void button_task_init(void)
     gpio_pull_up(BUTTON_PIN);
 
     button_state = BUTTON_STATE_RELEASED;
-    transition_us = time_us_64();
+    transition_us = systime_us();
     press_count = 0;
 }
 
 void button_task_handle(void)
 {
     bool pressed = button_read();
-    uint64_t now_us = time_us_64();
+    uint64_t now_us = systime_us();
 
     switch (button_state)
     {

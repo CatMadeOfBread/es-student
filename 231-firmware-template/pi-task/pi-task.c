@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include "pico/stdlib.h"
+#include "systime/systime.h"
 
 // Один член ряда занимал около 4,7 мкс.
 // 100 членов занимают около 470 мкс, то есть меньше 0,5 мс.
@@ -50,7 +50,7 @@ bool pi_task_start(uint32_t terms)
     pi_value = 0.0;
 
     pi_time_ms = 0;
-    pi_start_us = time_us_64();
+    pi_start_us = systime_us();
 
     pi_state = PI_TASK_RUNNING;
 
@@ -84,7 +84,7 @@ void pi_task_handle(void)
     if (pi_k >= pi_terms)
     {
         pi_value = pi_sum * 4.0;
-        pi_time_ms = (time_us_64() - pi_start_us) / 1000;
+        pi_time_ms = (systime_us() - pi_start_us) / 1000;
         pi_state = PI_TASK_READY;
     }
 }

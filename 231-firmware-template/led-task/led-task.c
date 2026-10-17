@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
-#include "pico/stdlib.h"
 #include "hardware/gpio.h"
+#include "systime/systime.h"
 
 static const uint32_t LED_PIN = 25;
 static const uint32_t DEFAULT_PERIOD_MS = 1000;
@@ -22,30 +22,6 @@ static void led_set(bool on)
 static void led_toggle(void)
 {
     led_set(!led_on);
-}
-
-// true, когда период прошёл.
-// Следующее срабатывание отсчитываем от прошлого, поэтому ошибка времени
-// одного вызова не сдвигает всю сетку последующих переключений.
-static bool period_elapsed(uint64_t *last_us, uint64_t period_us)
-{
-    uint64_t now_us = time_us_64();
-
-    if (now_us - *last_us < period_us)
-    {
-        return false;
-    }
-
-    *last_us += period_us;
-
-    // Если отстали больше чем на целый период, пропущенные события
-    // не догоняем, а начинаем новую сетку от текущего момента.
-    if (now_us - *last_us >= period_us)
-    {
-        *last_us = now_us;
-    }
-
-    return true;
 }
 
 void led_task_init(void)
@@ -78,7 +54,7 @@ void led_task_set_state(led_state_t state)
         case LED_STATE_BLINK:
             // Первое переключение выполняется сразу.
             led_toggle();
-            last_toggle_us = time_us_64();
+            last_toggle_us = systime_us();
             break;
     }
 }
@@ -135,7 +111,7 @@ void led_task_handle(void)
             uint64_t half_period_us =
                 ((uint64_t)led_period_ms * 1000) / 2;
 
-            if (period_elapsed(&last_toggle_us, half_period_us))
+            if (systime_period_elapsed(&last_toggle_us, half_period_us))
             {
                 led_toggle();
             }
