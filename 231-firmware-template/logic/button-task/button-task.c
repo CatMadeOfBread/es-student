@@ -7,8 +7,7 @@
 #include "platform/platform.h"
 #include "systime/systime.h"
 
-#define BUTTON_DEBOUNCE_MS 20
-#define BUTTON_DEBOUNCE_US (BUTTON_DEBOUNCE_MS * 1000)
+#define BUTTON_DEBOUNCE_US (20 * 1000)
 
 typedef enum
 {
