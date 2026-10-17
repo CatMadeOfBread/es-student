@@ -10,6 +10,7 @@
 
 #include "pico/stdlib.h"
 
+#include "button-task.h"
 #include "device.h"
 #include "led-task.h"
 #include "profiling.h"
@@ -146,6 +147,15 @@ static void cmd_led_period(const command_t *command)
     print_led_state();
 }
 
+static void cmd_button(const command_t *command)
+{
+    (void)command;
+
+    printf("button: %s, presses %u\r\n",
+           button_task_is_pressed() ? "pressed" : "released",
+           (unsigned)button_task_get_press_count());
+}
+
 static void cmd_calc_pi(const command_t *command)
 {
     uint32_t terms = CALC_PI_TERMS;
@@ -229,6 +239,11 @@ static const api_command_t api_commands[] = {
         "led_period",
         "set blink period: led_period <period_ms>",
         cmd_led_period,
+    },
+    {
+        "button",
+        "button state and press count",
+        cmd_button,
     },
     {
         "calc_pi",
