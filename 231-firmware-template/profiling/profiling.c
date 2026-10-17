@@ -1,53 +1,114 @@
 #include "profiling.h"
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "pico/stdlib.h"
 
-// итерация около 2 мкс, за секунду их около 500 000;
-// ближайшая степень двойки 2^19 = 524 288, среднее помнит около секунды
-#define AVG_SHIFT 19
-
-// замер в 1/256 долях микросекунды, чтобы среднее не теряло дробную часть
-#define FRACTION_SHIFT 8
-
-static uint32_t previous_us = 0;
-static uint32_t max_us = 0;
-static uint64_t avg_sum = 0;
-
-void profiling_init(void)
+typedef struct
 {
-    previous_us = time_us_32();
-    max_us = 0;
-    avg_sum = 0;
-}
+    bool initialized;
+    const char *name;
 
-void profiling_iteration(void)
+    uint32_t start_us;
+
+    uint32_t count;
+    uint32_t sum_us;
+    uint32_t max_us;
+} stopwatch_t;
+
+static stopwatch_t stopwatches[PROFILING_STOPWATCH_COUNT];
+
+void profiling_stopwatch_init(uint32_t id, const char *name)
 {
-    uint32_t now_us = time_us_32();
-    uint32_t iteration_us = now_us - previous_us;
-    previous_us = now_us;
-
-    if (iteration_us > max_us)
+    if (id >= PROFILING_STOPWATCH_COUNT)
     {
-        max_us = iteration_us;
+        return;
     }
 
-    avg_sum =
-        avg_sum -
-        (avg_sum >> AVG_SHIFT) +
-        ((uint64_t)iteration_us << FRACTION_SHIFT);
+    stopwatches[id].initialized = true;
+    stopwatches[id].name = name;
+    stopwatches[id].start_us = 0;
+    stopwatches[id].count = 0;
+    stopwatches[id].sum_us = 0;
+    stopwatches[id].max_us = 0;
 }
 
-float profiling_avg_us(void)
+void profiling_start(uint32_t id)
 {
-    return (float)(avg_sum >> AVG_SHIFT) / (1 << FRACTION_SHIFT);
+    if (id >= PROFILING_STOPWATCH_COUNT ||
+        !stopwatches[id].initialized)
+    {
+        return;
+    }
+
+    stopwatches[id].start_us = time_us_32();
 }
 
-uint32_t profiling_max_us(void)
+void profiling_stop(uint32_t id)
 {
-    return max_us;
+    if (id >= PROFILING_STOPWATCH_COUNT ||
+        !stopwatches[id].initialized)
+    {
+        return;
+    }
+
+    uint32_t elapsed_us =
+        time_us_32() - stopwatches[id].start_us;
+
+    stopwatches[id].count++;
+    stopwatches[id].sum_us += elapsed_us;
+
+    if (elapsed_us > stopwatches[id].max_us)
+    {
+        stopwatches[id].max_us = elapsed_us;
+    }
 }
 
-void profiling_reset_max(void)
+bool profiling_get(uint32_t id, profiling_result_t *result)
 {
-    max_us = 0;
+    if (id >= PROFILING_STOPWATCH_COUNT ||
+        !stopwatches[id].initialized ||
+        result == NULL)
+    {
+        return false;
+    }
+
+    result->name = stopwatches[id].name;
+    result->count = stopwatches[id].count;
+    result->max_us = stopwatches[id].max_us;
+
+    if (stopwatches[id].count == 0)
+    {
+        result->mean_us = 0.0f;
+    }
+    else
+    {
+        result->mean_us =
+            (float)stopwatches[id].sum_us /
+            (float)stopwatches[id].count;
+    }
+
+    return true;
+}
+
+void profiling_reset(void)
+{
+    for (uint32_t i = 0;
+         i < PROFILING_STOPWATCH_COUNT;
+         i++)
+    {
+        if (!stopwatches[i].initialized)
+        {
+            continue;
+        }
+
+        // profiling_reset() может быть вызван прямо внутри
+        // измеряемой команды. Поэтому начало текущего измерения
+        // переносим на момент сброса, а не обнуляем.
+        stopwatches[i].start_us = time_us_32();
+        stopwatches[i].count = 0;
+        stopwatches[i].sum_us = 0;
+        stopwatches[i].max_us = 0;
+    }
 }

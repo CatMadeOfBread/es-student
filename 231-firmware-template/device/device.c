@@ -1,44 +1,41 @@
 #include "device.h"
 
 #include <stdint.h>
-#include <stdio.h>
 
-#include "pico/unique_id.h"
-#include "pico/version.h"
 #include "hardware/regs/addressmap.h"
 #include "hardware/regs/sysinfo.h"
+#include "pico/unique_id.h"
+#include "pico/version.h"
 
-void device_info(void)
+void device_get_info(device_info_t *info)
 {
-    char board_id[PICO_UNIQUE_BOARD_ID_SIZE_BYTES * 2 + 1];
-    pico_get_unique_board_id_string(board_id, sizeof(board_id));
+    if (info == NULL)
+    {
+        return;
+    }
+
+    info->board = DEVICE_BOARD;
+
+    pico_get_unique_board_id_string(
+        info->serial,
+        sizeof(info->serial));
 
     volatile uint32_t *chip_id =
         (uint32_t *)(SYSINFO_BASE + SYSINFO_CHIP_ID_OFFSET);
 
     uint32_t id = *chip_id;
 
-    uint32_t manufacturer =
+    info->manufacturer =
         (id & SYSINFO_CHIP_ID_MANUFACTURER_BITS) >>
         SYSINFO_CHIP_ID_MANUFACTURER_LSB;
 
-    uint32_t part =
+    info->part =
         (id & SYSINFO_CHIP_ID_PART_BITS) >>
         SYSINFO_CHIP_ID_PART_LSB;
 
-    uint32_t revision =
+    info->revision =
         (id & SYSINFO_CHIP_ID_REVISION_BITS) >>
         SYSINFO_CHIP_ID_REVISION_LSB;
 
-    printf("name: %s\r\n", DEVICE_NAME);
-    printf("version: %s\r\n", FIRMWARE_VERSION);
-    printf("project: %s\r\n", DEVICE_PROJECT);
-    printf("repo: %s\r\n", DEVICE_REPO);
-    printf("board: %s\r\n", DEVICE_BOARD);
-    printf("serial: %s\r\n", board_id);
-    printf("chip: manufacturer 0x%03x, part 0x%04x, revision %u\r\n",
-           (unsigned)manufacturer,
-           (unsigned)part,
-           (unsigned)revision);
-    printf("pico-sdk: %s\r\n", PICO_SDK_VERSION_STRING);
+    info->sdk_version = PICO_SDK_VERSION_STRING;
 }
