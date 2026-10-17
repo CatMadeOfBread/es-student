@@ -3,6 +3,7 @@
 #include "api.h"
 #include "button-task.h"
 #include "led-task.h"
+#include "pi-task.h"
 #include "profiling.h"
 #include "stdio-text-protocol.h"
 
@@ -12,6 +13,7 @@ int main(void)
 
     led_task_init();
     button_task_init();
+    pi_task_init();
     stdio_text_protocol_init();
     profiling_init();
 
@@ -21,6 +23,7 @@ int main(void)
 
         led_task_handle();
         button_task_handle();
+        pi_task_handle();
 
         // принятая строка становится командой, команда — действием прибора
         const command_t *command = stdio_text_protocol_handle();
