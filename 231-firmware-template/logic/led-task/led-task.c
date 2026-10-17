@@ -1,12 +1,12 @@
-#include "led-task.h"
+#include "led-task/led-task.h"
 
+#include <stdbool.h>
 #include <stdint.h>
 
-#include "hardware/gpio.h"
+#include "platform/platform.h"
 #include "systime/systime.h"
 
-static const uint32_t LED_PIN = 25;
-static const uint32_t DEFAULT_PERIOD_MS = 1000;
+#define DEFAULT_PERIOD_MS 1000
 
 static led_state_t led_state = LED_STATE_BLINK;
 static uint32_t led_period_ms = DEFAULT_PERIOD_MS;
@@ -16,7 +16,7 @@ static uint64_t last_toggle_us = 0;
 static void led_set(bool on)
 {
     led_on = on;
-    gpio_put(LED_PIN, on);
+    platform_led_set(on);
 }
 
 static void led_toggle(void)
@@ -26,9 +26,6 @@ static void led_toggle(void)
 
 void led_task_init(void)
 {
-    gpio_init(LED_PIN);
-    gpio_set_dir(LED_PIN, GPIO_OUT);
-
     led_period_ms = DEFAULT_PERIOD_MS;
     led_on = false;
     led_set(false);
@@ -40,7 +37,6 @@ void led_task_set_state(led_state_t state)
 {
     led_state = state;
 
-    // Действие при входе в состояние.
     switch (led_state)
     {
         case LED_STATE_OFF:
@@ -52,7 +48,6 @@ void led_task_set_state(led_state_t state)
             break;
 
         case LED_STATE_BLINK:
-            // Первое переключение выполняется сразу.
             led_toggle();
             last_toggle_us = systime_us();
             break;
@@ -111,7 +106,9 @@ void led_task_handle(void)
             uint64_t half_period_us =
                 ((uint64_t)led_period_ms * 1000) / 2;
 
-            if (systime_period_elapsed(&last_toggle_us, half_period_us))
+            if (systime_period_elapsed(
+                    &last_toggle_us,
+                    half_period_us))
             {
                 led_toggle();
             }

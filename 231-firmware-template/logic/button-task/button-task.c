@@ -1,15 +1,12 @@
-#include "button-task.h"
+#include "button-task/button-task.h"
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
-#include "pico/stdlib.h"
-#include "hardware/gpio.h"
-
-#include "led-task.h"
+#include "platform/platform.h"
 #include "systime/systime.h"
 
-#define BUTTON_PIN 15
 #define BUTTON_DEBOUNCE_MS 20
 #define BUTTON_DEBOUNCE_US (BUTTON_DEBOUNCE_MS * 1000)
 
@@ -24,28 +21,19 @@ typedef enum
 static button_state_t button_state = BUTTON_STATE_RELEASED;
 static uint64_t transition_us = 0;
 static uint32_t press_count = 0;
+static button_task_callback_t button_on_press = NULL;
 
-static bool button_read(void)
+void button_task_init(button_task_callback_t on_press)
 {
-    // Кнопка замыкает GP15 на землю:
-    // ноль на выводе означает "нажата".
-    return gpio_get(BUTTON_PIN) == 0;
-}
-
-void button_task_init(void)
-{
-    gpio_init(BUTTON_PIN);
-    gpio_set_dir(BUTTON_PIN, GPIO_IN);
-    gpio_pull_up(BUTTON_PIN);
-
     button_state = BUTTON_STATE_RELEASED;
     transition_us = systime_us();
     press_count = 0;
+    button_on_press = on_press;
 }
 
 void button_task_handle(void)
 {
-    bool pressed = button_read();
+    bool pressed = platform_button_read();
     uint64_t now_us = systime_us();
 
     switch (button_state)
@@ -61,14 +49,17 @@ void button_task_handle(void)
         case BUTTON_STATE_PRESSING:
             if (!pressed)
             {
-                // Уровень не продержался 20 мс — это дребезг.
                 button_state = BUTTON_STATE_RELEASED;
             }
             else if (now_us - transition_us >= BUTTON_DEBOUNCE_US)
             {
                 button_state = BUTTON_STATE_PRESSED;
                 press_count++;
-                led_task_next_state();
+
+                if (button_on_press != NULL)
+                {
+                    button_on_press();
+                }
             }
             break;
 
@@ -83,7 +74,6 @@ void button_task_handle(void)
         case BUTTON_STATE_RELEASING:
             if (pressed)
             {
-                // Отпускание не подтвердилось — кнопка всё ещё нажата.
                 button_state = BUTTON_STATE_PRESSED;
             }
             else if (now_us - transition_us >= BUTTON_DEBOUNCE_US)

@@ -11,38 +11,60 @@ pico_sdk_init()
 
 add_compile_options(-Wall)
 
-# libs лежит вне папки проекта:
-# второй аргумент задаёт каталог её сборки.
 add_subdirectory(../libs ${CMAKE_BINARY_DIR}/libs)
 
-# 0 — вызовов секундомеров в образе нет.
 target_compile_definitions(profiling PUBLIC
     PROFILING_ENABLED=1
 )
 
-add_executable(${PROJECT_NAME}
-    ${CMAKE_CURRENT_SOURCE_DIR}/main.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/led-task/led-task.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/button-task/button-task.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/pi-task/pi-task.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/api/api.c
+# Железо прибора: единственный модуль проекта,
+# который подключает SDK.
+add_library(platform STATIC
+    platform/platform.c
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE
+target_include_directories(platform PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/led-task
-    ${CMAKE_CURRENT_SOURCE_DIR}/button-task
-    ${CMAKE_CURRENT_SOURCE_DIR}/pi-task
-    ${CMAKE_CURRENT_SOURCE_DIR}/api
+)
+
+target_link_libraries(platform PRIVATE
+    pico_stdlib
+)
+
+# Логика прибора: задачи и API без SDK.
+add_library(logic STATIC
+    logic/api/api.c
+    logic/api/api-callbacks.c
+    logic/led-task/led-task.c
+    logic/button-task/button-task.c
+    logic/pi-task/pi-task.c
+)
+
+target_include_directories(logic PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/logic
+)
+
+# api.h использует command_t, поэтому протокол —
+# часть публичного интерфейса logic.
+target_link_libraries(logic
+    PUBLIC
+        stdio_text_protocol
+    PRIVATE
+        platform
+        systime
+        profiling
+        device
+)
+
+add_executable(${PROJECT_NAME}
+    main.c
 )
 
 target_link_libraries(${PROJECT_NAME}
     pico_stdlib
-
-    stdio_text_protocol
-    systime
+    logic
+    platform
     profiling
-    device
     logging
 )
 
