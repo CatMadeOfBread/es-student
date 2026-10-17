@@ -37,8 +37,8 @@ void device_info(void)
     printf("board: %s\r\n", DEVICE_BOARD);
     printf("serial: %s\r\n", board_id);
     printf("chip: manufacturer 0x%03x, part 0x%04x, revision %u\r\n",
-           manufacturer,
-           part,
-           revision);
+           (unsigned)manufacturer,
+           (unsigned)part,
+           (unsigned)revision);
     printf("pico-sdk: %s\r\n", PICO_SDK_VERSION_STRING);
 }

@@ -11,6 +11,7 @@
 #include "pico/stdlib.h"
 
 #include "device.h"
+#include "led-task.h"
 #include "profiling.h"
 
 // обработчик команды: получает имя и аргументы
@@ -30,6 +31,7 @@ static volatile double pi_result;
 
 static bool parse_u32(const char *text, uint32_t *value)
 {
+    // strtoul приняла бы и знак, поэтому первый символ проверяем сами.
     if (text == NULL || !isdigit((unsigned char)text[0]))
     {
         return false;
@@ -62,6 +64,30 @@ static double calc_pi(uint32_t terms)
     return sum * 4.0;
 }
 
+static const char *led_state_name(led_state_t state)
+{
+    switch (state)
+    {
+        case LED_STATE_OFF:
+            return "off";
+
+        case LED_STATE_ON:
+            return "on";
+
+        case LED_STATE_BLINK:
+            return "blink";
+    }
+
+    return "unknown";
+}
+
+static void print_led_state(void)
+{
+    printf("led: %s, period %u ms\r\n",
+           led_state_name(led_task_get_state()),
+           (unsigned)led_task_get_period_ms());
+}
+
 static void cmd_info(const command_t *command)
 {
     (void)command;
@@ -74,6 +100,50 @@ static void cmd_uptime(const command_t *command)
 
     printf("uptime: %llu ms\r\n",
            (unsigned long long)(time_us_64() / 1000));
+}
+
+static void cmd_led_enable(const command_t *command)
+{
+    (void)command;
+
+    led_task_set_state(LED_STATE_ON);
+    print_led_state();
+}
+
+static void cmd_led_disable(const command_t *command)
+{
+    (void)command;
+
+    led_task_set_state(LED_STATE_OFF);
+    print_led_state();
+}
+
+static void cmd_led_blink(const command_t *command)
+{
+    (void)command;
+
+    led_task_set_state(LED_STATE_BLINK);
+    print_led_state();
+}
+
+static void cmd_led_period(const command_t *command)
+{
+    uint32_t period_ms;
+
+    if (command->argc != 1 ||
+        !parse_u32(command->argv[0], &period_ms))
+    {
+        printf("error: usage led_period <period_ms>\r\n");
+        return;
+    }
+
+    if (!led_task_set_period_ms(period_ms))
+    {
+        printf("error: period_ms must be greater than 0\r\n");
+        return;
+    }
+
+    print_led_state();
 }
 
 static void cmd_calc_pi(const command_t *command)
@@ -139,6 +209,26 @@ static const api_command_t api_commands[] = {
         "uptime",
         "time since reset",
         cmd_uptime,
+    },
+    {
+        "led_enable",
+        "turn led on",
+        cmd_led_enable,
+    },
+    {
+        "led_disable",
+        "turn led off",
+        cmd_led_disable,
+    },
+    {
+        "led_blink",
+        "blink led",
+        cmd_led_blink,
+    },
+    {
+        "led_period",
+        "set blink period: led_period <period_ms>",
+        cmd_led_period,
     },
     {
         "calc_pi",
