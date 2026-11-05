@@ -12,3 +12,6 @@ bool platform_button_read(void);
 
 // Напряжение на GP26 в вольтах.
 float platform_voltage_read(void);
+
+// Температура кристалла в градусах Цельсия.
+float platform_temp_read(void);
