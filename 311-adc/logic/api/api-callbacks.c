@@ -268,6 +268,22 @@ void api_print_telemetry(const telemetry_record_t *record)
            record->temp_c);
 }
 
+static void cmd_charge_on(const command_t *command)
+{
+    (void)command;
+
+    platform_charge_set(true);
+    printf("charge: on\r\n");
+}
+
+static void cmd_charge_off(const command_t *command)
+{
+    (void)command;
+
+    platform_charge_set(false);
+    printf("charge: off\r\n");
+}
+
 static void cmd_tm_start(const command_t *command)
 {
     uint32_t period_ms = TELEMETRY_DEFAULT_PERIOD_MS;
@@ -313,6 +329,16 @@ static void cmd_get_voltage(const command_t *command)
 }
 
 const api_command_t api_commands[] = {
+    {
+        "charge_on",
+        "charge RC circuit",
+        cmd_charge_on,
+    },
+    {
+        "charge_off",
+        "discharge RC circuit",
+        cmd_charge_off,
+    },
     {
         "tm_start",
         "start telemetry: tm_start [<period_ms>]",

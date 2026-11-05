@@ -38,3 +38,5 @@
 ![](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-3-1-3.yml/badge.svg)
 
 ![](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-3-1-4.yml/badge.svg)
+
+![](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-3-1-5.yml/badge.svg)
