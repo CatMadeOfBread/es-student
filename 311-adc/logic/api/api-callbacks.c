@@ -1,4 +1,5 @@
 #include "api/api-commands.h"
+#include "api/api.h"
 
 #include <ctype.h>
 #include <errno.h>
@@ -16,6 +17,8 @@
 #include "platform/platform.h"
 #include "profiling/profiling.h"
 #include "systime/systime.h"
+
+#define TELEMETRY_DEFAULT_PERIOD_MS 100
 
 static bool parse_u32(const char *text, uint32_t *value)
 {
@@ -257,6 +260,44 @@ static void cmd_profiling_reset(
     printf("profiling reset\r\n");
 }
 
+void api_print_telemetry(const telemetry_record_t *record)
+{
+    printf("tm: %llu %.3f %.1f\r\n",
+           (unsigned long long)record->time_us,
+           record->voltage_v,
+           record->temp_c);
+}
+
+static void cmd_tm_start(const command_t *command)
+{
+    uint32_t period_ms = TELEMETRY_DEFAULT_PERIOD_MS;
+
+    if (command->argc > 1 ||
+        (command->argc == 1 &&
+         !parse_u32(command->argv[0], &period_ms)))
+    {
+        printf("error: usage tm_start [<period_ms>]\r\n");
+        return;
+    }
+
+    if (!telemetry_task_start(period_ms))
+    {
+        printf("error: period_ms must be at least 10\r\n");
+        return;
+    }
+
+    printf("telemetry: started, period %u ms\r\n",
+           (unsigned)period_ms);
+}
+
+static void cmd_tm_stop(const command_t *command)
+{
+    (void)command;
+
+    telemetry_task_stop();
+    printf("telemetry: stopped\r\n");
+}
+
 static void cmd_get_temp(const command_t *command)
 {
     (void)command;
@@ -272,6 +313,16 @@ static void cmd_get_voltage(const command_t *command)
 }
 
 const api_command_t api_commands[] = {
+    {
+        "tm_start",
+        "start telemetry: tm_start [<period_ms>]",
+        cmd_tm_start,
+    },
+    {
+        "tm_stop",
+        "stop telemetry",
+        cmd_tm_stop,
+    },
     {
         "get_temp",
         "chip temperature, degrees Celsius",

@@ -9,6 +9,7 @@
 #include "platform/platform.h"
 #include "profiling/profiling.h"
 #include "stdio-text-protocol/stdio-text-protocol.h"
+#include "telemetry-task/telemetry-task.h"
 
 typedef enum
 {
@@ -17,6 +18,7 @@ typedef enum
     STOPWATCH_LED,
     STOPWATCH_BUTTON,
     STOPWATCH_PI,
+    STOPWATCH_TELEMETRY,
 } stopwatch_id_t;
 
 int main(void)
@@ -34,6 +36,7 @@ int main(void)
     button_task_init(led_task_next_state);
 
     pi_task_init();
+    telemetry_task_init(api_print_telemetry);
     stdio_text_protocol_init();
 
     profiling_stopwatch_init(
@@ -46,6 +49,8 @@ int main(void)
         STOPWATCH_BUTTON, "button");
     profiling_stopwatch_init(
         STOPWATCH_PI, "pi");
+    profiling_stopwatch_init(
+        STOPWATCH_TELEMETRY, "telemetry");
 
     while (1)
     {
@@ -62,6 +67,10 @@ int main(void)
         profiling_start(STOPWATCH_PI);
         pi_task_handle();
         profiling_stop(STOPWATCH_PI);
+
+        profiling_start(STOPWATCH_TELEMETRY);
+        telemetry_task_handle();
+        profiling_stop(STOPWATCH_TELEMETRY);
 
         profiling_start(STOPWATCH_COMMAND);
 

@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define PROFILING_STOPWATCH_COUNT 5
+#define PROFILING_STOPWATCH_COUNT 6
 
 // По умолчанию профилирование включено.
 #ifndef PROFILING_ENABLED
