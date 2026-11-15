@@ -1,0 +1,77 @@
+задание: 3.2.1
+проект: 321-audio-recorder
+устройство: 2e8a:000a
+серийный номер: 5054316540A3259C
+порт: /dev/ttyACM0
+начало: 2026-11-16T02:57:03
+   0.000 --> 
+   0.504 --> help
+   0.505 <-- help
+   0.505 <-- help             list of commands
+   0.505 <-- timer_blink_start blink led by timer: timer_blink_start <period_ms>
+   0.505 <-- timer_blink_stop stop timer blink, number of toggles
+   0.505 <-- charge_on        charge RC circuit
+   0.505 <-- charge_off       discharge RC circuit
+   0.505 <-- tm_start         start telemetry: tm_start [<period_ms>]
+   0.505 <-- tm_stop          stop telemetry
+   0.505 <-- get_temp         chip temperature, degrees Celsius
+   0.505 <-- get_voltage      voltage on GP26, ADC input 0
+   0.505 <-- info             device passport
+   0.505 <-- uptime           time since reset
+   0.506 <-- led_enable       turn led on
+   0.506 <-- led_disable      turn led off
+   0.506 <-- led_blink        blink led
+   0.506 <-- led_period       set blink period: led_period <period_ms>
+   0.506 <-- button           button state and press count
+   0.506 <-- pi_start         start pi calculation: pi_start [<terms>]
+   0.556 <-- pi               pi calculation result or state
+   0.556 <-- profiling        profiling results
+   0.556 <-- profiling_reset  reset profiling results
+   1.515 --> info
+   1.565 <-- info
+   1.565 <-- name: es-recorder
+   1.565 <-- version: 1.0.0
+   1.565 <-- project: 321-audio-recorder
+   1.565 <-- repo: https://github.com/CatMadeOfBread/es-student
+   1.565 <-- board: pico
+   1.565 <-- serial: 5054316540A3259C
+   1.565 <-- chip: manufacturer 0x927, part 0x0002, revision 2
+   1.566 <-- pico-sdk: 2.3.0
+   2.523 --> timer_blink_start 250
+   2.573 <-- timer_blink_start 250
+   2.573 <-- timer_blink: started, period 250 ms
+   3.532 --> pi_start 3000000
+   3.582 <-- pi_start 3000000
+   3.582 <-- pi: started, 3000000 terms
+   4.538 --> uptime
+   4.588 <-- uptime
+   4.588 <-- uptime: 268578 ms
+   5.543 --> info
+   5.593 <-- info
+   5.593 <-- name: es-recorder
+   5.593 <-- version: 1.0.0
+   5.593 <-- project: 321-audio-recorder
+   5.593 <-- repo: https://github.com/CatMadeOfBread/es-student
+   5.593 <-- board: pico
+   5.593 <-- serial: 5054316540A3259C
+   5.593 <-- chip: manufacturer 0x927, part 0x0002, revision 2
+   5.593 <-- pico-sdk: 2.3.0
+   6.551 --> pi
+   6.602 <-- pi
+   6.602 <-- pi: running
+   8.566 --> timer_blink_stop
+   8.617 <-- timer_blink_stop
+   8.617 <-- timer_blink: stopped, 24 toggles
+   9.573 --> timer_blink_start 100
+   9.624 <-- timer_blink_start 100
+   9.624 <-- timer_blink: started, period 100 ms
+  11.589 --> timer_blink_stop
+  11.639 <-- timer_blink_stop
+  11.639 <-- timer_blink: stopped, 20 toggles
+  12.596 --> timer_blink_start 5
+  12.647 <-- timer_blink_start 5
+  12.647 <-- error: period_ms must be 10..60000
+  13.100 --> timer_blink_start
+  13.150 <-- timer_blink_start
+  13.150 <-- error: usage timer_blink_start <period_ms>
+итог: отправлено кадров 13, принято строк 57
