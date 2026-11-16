@@ -574,7 +574,62 @@ static void cmd_generate_tone(const command_t *command)
     printf("tone: %u Hz\r\n", (unsigned)freq_hz);
 }
 
+static void cmd_wdt_enable(const command_t *command)
+{
+    uint32_t timeout_ms;
+
+    if (command->argc != 1 || !parse_u32(command->argv[0], &timeout_ms))
+    {
+        printf("error: usage wdt_enable <timeout_ms>\r\n");
+        return;
+    }
+
+    if (!platform_watchdog_enable(timeout_ms))
+    {
+        printf("error: timeout_ms must be 1..8388\r\n");
+        return;
+    }
+
+    printf("wdt: enabled, timeout %u ms\r\n", (unsigned)timeout_ms);
+}
+
+static void cmd_hang(const command_t *command)
+{
+    (void)command;
+    printf("hang: superloop stopped\r\n");
+
+    // Суперцикл остановлен, прерывания продолжают работать.
+    while (1)
+    {
+    }
+}
+
+static void cmd_reset_reason(const command_t *command)
+{
+    (void)command;
+    uint32_t restarts;
+    bool watchdog_reset = platform_watchdog_caused_reset(&restarts);
+
+    printf("reset: %s, restarts %u\r\n",
+           watchdog_reset ? "watchdog" : "other", (unsigned)restarts);
+}
+
 const api_command_t api_commands[] = {
+    {
+        "wdt_enable",
+        "enable watchdog: wdt_enable <timeout_ms>",
+        cmd_wdt_enable,
+    },
+    {
+        "hang",
+        "stop the superloop to test watchdog",
+        cmd_hang,
+    },
+    {
+        "reset_reason",
+        "show reset reason and watchdog restart count",
+        cmd_reset_reason,
+    },
     {
         "generate_tone",
         "set PWM tone: generate_tone <Hz>",

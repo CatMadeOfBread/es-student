@@ -79,3 +79,10 @@ void platform_write(const void *data, uint32_t bytes);
 
 // Тон на GP20: 20..20000 Гц, 0 выключает тон.
 bool platform_tone_set(uint32_t freq_hz);
+
+// false, если таймаут вне диапазона 1..8388 мс.
+bool platform_watchdog_enable(uint32_t timeout_ms);
+void platform_watchdog_feed(void);
+
+// Причина последнего сброса и число сбросов по watchdog подряд.
+bool platform_watchdog_caused_reset(uint32_t *restarts);

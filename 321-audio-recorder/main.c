@@ -101,6 +101,9 @@ int main(void)
 
         profiling_stop(STOPWATCH_COMMAND);
 
+        // Все задачи вернули управление — суперцикл жив.
+        platform_watchdog_feed();
+
         profiling_stop(STOPWATCH_LOOP);
     }
 }
