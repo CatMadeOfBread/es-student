@@ -286,6 +286,12 @@ static void cmd_charge_off(const command_t *command)
 
 static void cmd_tm_start(const command_t *command)
 {
+    if (platform_adc_busy())
+    {
+        printf("error: adc busy\r\n");
+        return;
+    }
+
     uint32_t period_ms = TELEMETRY_DEFAULT_PERIOD_MS;
 
     if (command->argc > 1 ||
@@ -316,6 +322,12 @@ static void cmd_tm_stop(const command_t *command)
 
 static void cmd_get_temp(const command_t *command)
 {
+    if (platform_adc_busy())
+    {
+        printf("error: adc busy\r\n");
+        return;
+    }
+
     (void)command;
 
     printf("temp: %.1f C\r\n", platform_temp_read());
@@ -323,6 +335,12 @@ static void cmd_get_temp(const command_t *command)
 
 static void cmd_get_voltage(const command_t *command)
 {
+    if (platform_adc_busy())
+    {
+        printf("error: adc busy\r\n");
+        return;
+    }
+
     (void)command;
 
     printf("voltage: %.3f V\r\n", platform_voltage_read());
@@ -362,7 +380,81 @@ static void cmd_timer_blink_stop(const command_t *command)
            (unsigned)toggles);
 }
 
+static void cmd_cap_start(const command_t *command)
+{
+    uint32_t count;
+    uint32_t period_us;
+
+    if (command->argc != 2 ||
+        !parse_u32(command->argv[0], &count) ||
+        !parse_u32(command->argv[1], &period_us))
+    {
+        printf("error: usage cap_start <N> <period_us>\r\n");
+        return;
+    }
+
+    if (count == 0 || count > PLATFORM_CAPTURE_MAX || period_us < 10)
+    {
+        printf("error: N must be 1..2000, period_us at least 10\r\n");
+        return;
+    }
+
+    if (telemetry_task_get_state() == TELEMETRY_STATE_RUN ||
+        !platform_capture_start(count, period_us))
+    {
+        printf("error: adc busy\r\n");
+        return;
+    }
+
+    printf("capture: started, %u samples, period %u us\r\n",
+           (unsigned)count, (unsigned)period_us);
+}
+
+static void cmd_cap_dump(const command_t *command)
+{
+    (void)command;
+
+    if (!platform_capture_done())
+    {
+        printf("error: no capture\r\n");
+        return;
+    }
+
+    platform_capture_t capture;
+    platform_capture_get(&capture);
+
+    printf("capture: %u samples, period %u us, interval %u..%u us, handler %.1f %%\r\n",
+           (unsigned)capture.count, (unsigned)capture.period_us,
+           (unsigned)capture.min_interval_us, (unsigned)capture.max_interval_us,
+           capture.handler_percent);
+
+    for (uint32_t i = 0; i < capture.count; i++)
+    {
+        if (i % 16 == 0)
+        {
+            printf("cap:");
+        }
+
+        printf(" %u", (unsigned)capture.samples[i]);
+
+        if (i % 16 == 15 || i + 1 == capture.count)
+        {
+            printf("\r\n");
+        }
+    }
+}
+
 const api_command_t api_commands[] = {
+    {
+        "cap_start",
+        "capture ADC samples: cap_start <N> <period_us>",
+        cmd_cap_start,
+    },
+    {
+        "cap_dump",
+        "print captured samples and timing",
+        cmd_cap_dump,
+    },
     {
         "timer_blink_start",
         "blink led by timer: timer_blink_start <period_ms>",

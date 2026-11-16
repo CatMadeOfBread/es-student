@@ -26,3 +26,23 @@ float platform_temp_read(void);
 
 // Включает заряд RC-цепи через GP22 или соединяет её с землёй.
 void platform_charge_set(bool on);
+
+// Занят ли АЦП захватом.
+bool platform_adc_busy(void);
+
+// Захват count отсчётов GP26 по будильнику с периодом period_us.
+#define PLATFORM_CAPTURE_MAX 2000
+bool platform_capture_start(uint32_t count, uint32_t period_us);
+bool platform_capture_done(void);
+
+// Отсчёты, разброс интервалов и доля времени внутри обработчика.
+typedef struct {
+    const uint16_t *samples;
+    uint32_t count;
+    uint32_t period_us;
+    uint32_t min_interval_us;
+    uint32_t max_interval_us;
+    float handler_percent;
+} platform_capture_t;
+
+void platform_capture_get(platform_capture_t *capture);
