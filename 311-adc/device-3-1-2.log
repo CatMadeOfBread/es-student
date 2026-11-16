@@ -3,28 +3,48 @@
 устройство: 2e8a:000a
 серийный номер: 5054316540A3259C
 порт: /dev/ttyACM0
-начало: 2026-11-05T22:43:26
+начало: 2026-11-16T23:05:53
    0.000 --> 
-   0.504 --> info
-   0.555 <-- info
-   0.555 <-- name: es-adc
-   0.555 <-- version: 1.0.0
-   0.555 <-- project: 311-adc
-   0.555 <-- repo: https://github.com/CatMadeOfBread/es-student
-   0.555 <-- board: pico
-   0.555 <-- serial: 5054316540A3259C
-   0.555 <-- chip: manufacturer 0x927, part 0x0002, revision 2
-   0.555 <-- pico-sdk: 2.3.0
-   1.515 --> get_temp
-   1.565 <-- get_temp
-   1.565 <-- temp: 32.3 C
-   2.524 --> get_temp
-   2.575 <-- get_temp
-   2.575 <-- temp: 33.7 C
-   3.534 --> get_temp
-   3.585 <-- get_temp
-   3.585 <-- temp: 34.2 C
-   4.545 --> get_voltage
-   4.595 <-- get_voltage
-   4.595 <-- voltage: 0.565 V
-итог: отправлено кадров 6, принято строк 17
+   0.501 --> help
+   0.502 <-- help
+   0.503 <-- help             list of commands
+   0.503 <-- charge_on        charge RC circuit
+   0.503 <-- charge_off       discharge RC circuit
+   0.503 <-- tm_start         start telemetry: tm_start [<period_ms>]
+   0.503 <-- tm_stop          stop telemetry
+   0.503 <-- get_temp         chip temperature, degrees Celsius
+   0.503 <-- get_voltage      voltage on GP26, ADC input 0
+   0.503 <-- info             device passport
+   0.503 <-- uptime           time since reset
+   0.503 <-- led_enable       turn led on
+   0.503 <-- led_disable      turn led off
+   0.503 <-- led_blink        blink led
+   0.553 <-- led_period       set blink period: led_period <period_ms>
+   0.553 <-- button           button state and press count
+   0.553 <-- pi_start         start pi calculation: pi_start [<terms>]
+   0.553 <-- pi               pi calculation result or state
+   0.553 <-- profiling        profiling results
+   0.553 <-- profiling_reset  reset profiling results
+   1.506 --> info
+   1.556 <-- info
+   1.556 <-- name: es-adc
+   1.556 <-- version: 1.0.0
+   1.556 <-- project: 311-adc
+   1.556 <-- repo: https://github.com/CatMadeOfBread/es-student
+   1.556 <-- board: pico
+   1.556 <-- serial: 5054316540A3259C
+   1.556 <-- chip: manufacturer 0x927, part 0x0002, revision 2
+   1.556 <-- pico-sdk: 2.3.0
+   2.509 --> get_temp
+   2.559 <-- get_temp
+   2.559 <-- temp: 33.7 C
+   3.511 --> get_temp
+   3.561 <-- get_temp
+   3.562 <-- temp: 35.1 C
+   4.516 --> get_temp
+   4.566 <-- get_temp
+   4.566 <-- temp: 35.1 C
+   5.520 --> get_voltage
+   5.570 <-- get_voltage
+   5.570 <-- voltage: 0.591 V
+итог: отправлено кадров 7, принято строк 36
