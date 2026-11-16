@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "block-task/block-task.h"
 #include "button-task/button-task.h"
 #include "device/device.h"
 #include "firmware.h"
@@ -444,7 +445,65 @@ static void cmd_cap_dump(const command_t *command)
     }
 }
 
+static void print_dma_cap(const uint16_t *samples, uint32_t count,
+                          uint32_t time_us)
+{
+    uint16_t min = samples[0];
+    uint16_t max = samples[0];
+    uint32_t sum = 0;
+
+    for (uint32_t i = 0; i < count; i++)
+    {
+        uint16_t sample = samples[i];
+        if (sample < min)
+        {
+            min = sample;
+        }
+        if (sample > max)
+        {
+            max = sample;
+        }
+        sum += sample;
+    }
+
+    uint32_t expected_us =
+        (uint32_t)((uint64_t)count * 1000000 / PLATFORM_SAMPLE_RATE_HZ);
+    float mean = (float)sum / count;
+
+    printf("dma_cap: %u samples in %u us, expected %u us, min %u max %u mean %.1f\r\n",
+           (unsigned)count, (unsigned)time_us, (unsigned)expected_us,
+           (unsigned)min, (unsigned)max, mean);
+}
+
+static void cmd_dma_cap(const command_t *command)
+{
+    uint32_t count;
+
+    if (command->argc != 1 || !parse_u32(command->argv[0], &count))
+    {
+        printf("error: usage dma_cap <N>\r\n");
+        return;
+    }
+
+    if (count == 0 || count > PLATFORM_BLOCK_MAX)
+    {
+        printf("error: N must be 1..8192\r\n");
+        return;
+    }
+
+    if (telemetry_task_get_state() == TELEMETRY_STATE_RUN ||
+        !block_task_start(count, print_dma_cap))
+    {
+        printf("error: adc busy\r\n");
+    }
+}
+
 const api_command_t api_commands[] = {
+    {
+        "dma_cap",
+        "capture ADC block through DMA: dma_cap <N>",
+        cmd_dma_cap,
+    },
     {
         "cap_start",
         "capture ADC samples: cap_start <N> <period_us>",

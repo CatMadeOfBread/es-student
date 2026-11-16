@@ -46,3 +46,16 @@ typedef struct {
 } platform_capture_t;
 
 void platform_capture_get(platform_capture_t *capture);
+
+// Частота отсчётов АЦП в блоке и потоке.
+#define PLATFORM_SAMPLE_RATE_HZ 44100
+
+// Захват блока отсчётов GP26 через DMA.
+// false — АЦП занят или число отсчётов вне диапазона 1..8192.
+#define PLATFORM_BLOCK_MAX 8192
+bool platform_block_start(uint32_t count);
+bool platform_block_done(void);
+const uint16_t *platform_block_samples(void);
+
+// Время от запуска АЦП до завершения захвата блока.
+uint32_t platform_block_time_us(void);
