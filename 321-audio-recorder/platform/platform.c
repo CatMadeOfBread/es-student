@@ -69,8 +69,7 @@ bool platform_blink_start(uint32_t period_ms)
     blink_toggles = 0;
 
     // Период отсчитывается от начала прошлого вызова.
-    blink_running = add_repeating_timer_ms(
-        -(int32_t)period_ms, on_blink, NULL, &blink_timer);
+    blink_running = add_repeating_timer_ms(-(int32_t)period_ms, on_blink, NULL, &blink_timer);
     return blink_running;
 }
 
