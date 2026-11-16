@@ -46,3 +46,5 @@
 [![3.2.2 Захват по таймеру](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-3-2-2.yml/badge.svg)](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-3-2-2.yml)
 
 [![3.2.3 Захват блока через DMA](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-3-2-3.yml/badge.svg)](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-3-2-3.yml)
+
+[![3.2.4 Поток с двойной буферизацией](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-3-2-4.yml/badge.svg)](https://github.com/CatMadeOfBread/es-student/actions/workflows/check-3-2-4.yml)

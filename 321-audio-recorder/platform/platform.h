@@ -59,3 +59,20 @@ const uint16_t *platform_block_samples(void);
 
 // Время от запуска АЦП до завершения захвата блока.
 uint32_t platform_block_time_us(void);
+
+// Поток: два буфера по 1024 байта. Пока поддерживается 16 бит.
+#define PLATFORM_STREAM_BYTES 1024
+bool platform_stream_start(uint8_t bits);
+void platform_stream_stop(void);
+
+// Следующий готовый буфер или NULL. В samples записывается число отсчётов.
+const uint8_t *platform_stream_next(uint32_t *samples);
+
+// Освобождает буфер после отправки.
+void platform_stream_release(void);
+
+// Сколько раз DMA застал буфер неотправленным.
+uint32_t platform_stream_overruns(void);
+
+// Отправляет двоичные данные без преобразования переводов строки.
+void platform_write(const void *data, uint32_t bytes);
