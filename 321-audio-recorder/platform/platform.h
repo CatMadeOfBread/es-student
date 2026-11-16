@@ -76,3 +76,6 @@ uint32_t platform_stream_overruns(void);
 
 // Отправляет двоичные данные без преобразования переводов строки.
 void platform_write(const void *data, uint32_t bytes);
+
+// Тон на GP20: 20..20000 Гц, 0 выключает тон.
+bool platform_tone_set(uint32_t freq_hz);

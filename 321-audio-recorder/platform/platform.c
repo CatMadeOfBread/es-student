@@ -2,11 +2,15 @@
 
 #include "pico/stdlib.h"
 #include "hardware/adc.h"
+#include "hardware/clocks.h"
 #include "hardware/dma.h"
 #include "hardware/irq.h"
+#include "hardware/pwm.h"
 
 #define LED_PIN 25
 #define BUTTON_PIN 15
+#define TONE_PIN 20
+#define TONE_COUNT_HZ 1000000u
 
 // Вход АЦП: GP26, канал 0.
 #define ADC_PIN 26
@@ -69,6 +73,15 @@ void platform_init(void)
     stream_channels[1] = dma_claim_unused_channel(true);
     irq_set_exclusive_handler(DMA_IRQ_0, on_stream_buffer);
     irq_set_enabled(DMA_IRQ_0, true);
+
+    gpio_set_function(TONE_PIN, GPIO_FUNC_PWM);
+    uint slice = pwm_gpio_to_slice_num(TONE_PIN);
+    pwm_config config = pwm_get_default_config();
+    pwm_config_set_clkdiv(&config, (float)clock_get_hz(clk_sys) / TONE_COUNT_HZ);
+    pwm_config_set_wrap(&config, 999);
+    pwm_init(slice, &config, false);
+    pwm_set_gpio_level(TONE_PIN, 0);
+    pwm_set_enabled(slice, true);
 }
 
 void platform_led_set(bool on)
@@ -417,4 +430,24 @@ uint32_t platform_stream_overruns(void)
 void platform_write(const void *data, uint32_t bytes)
 {
     stdio_put_string((const char *)data, (int)bytes, false, false);
+}
+
+bool platform_tone_set(uint32_t freq_hz)
+{
+    if (freq_hz == 0)
+    {
+        pwm_set_gpio_level(TONE_PIN, 0);
+        return true;
+    }
+
+    if (freq_hz < 20 || freq_hz > 20000)
+    {
+        return false;
+    }
+
+    uint32_t period_us = TONE_COUNT_HZ / freq_hz;
+    uint slice = pwm_gpio_to_slice_num(TONE_PIN);
+    pwm_set_wrap(slice, (uint16_t)(period_us - 1));
+    pwm_set_gpio_level(TONE_PIN, (uint16_t)(period_us / 2));
+    return true;
 }
